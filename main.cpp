@@ -67,14 +67,7 @@ int main(int argc, char** argv) {
 	fillColor = makeColoredPixel(0x00, 0x00, 0x00);
 	strokeColor = fillColor;
 
-	uint32_t purple = makeColoredPixel(0xFF, 0x00, 0xFF);
-	fillColor = purple;
-
-	// fillRect(frameBuffer, 100, 100, 100, 100);
-
 	// Draw a color output demo
-
-	/*
 	int sampleCount = 25;
 	int cellSize = 25;
 	for (int x = 1; x < sampleCount; x += 1) {
@@ -91,8 +84,9 @@ int main(int argc, char** argv) {
 			fillRect(frameBuffer, startX, startY, cellSize, cellSize);
 		}
 	}
-	*/
+	
 
+	/*
 	for (int x = 0; x < variableInfo.xres; x += 1) {
 		for (int y = 0; y < variableInfo.yres; y += 1) {
 			float hPercentage = (float)x / (float)variableInfo.xres;
@@ -106,16 +100,7 @@ int main(int argc, char** argv) {
 			setPixelColor(frameBuffer, x, y, fillColor);
 		}
 	}
-	
-
-	// long location = (x + variableInfo.xoffset) * (variableInfo.bits_per_pixel / 8) + (y + variableInfo.yoffset) * fixedInfo.line_length;
-	// uint32_t pixel = *((uint32_t*)(frameBuffer + location));
-	// *((uint32_t*)(frameBuffer + location)) = makeColoredPixel(0xFF, 0x00, 0xFF, &variableInfo);
-
-	/*
-	std::cout << "Vertical resolution: " << variableInfo.yres << std::endl;
-	std::cout << "Horizontal resolution: " << variableInfo.xres << std::endl;
-	std::cout << "Total screen size: " << screenSize << std::endl;
 	*/
+	
 	return 0;
 }
