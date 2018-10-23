@@ -15,11 +15,16 @@ struct fb_var_screeninfo variableInfo;
 
 
 inline uint32_t makeColoredPixel(uint8_t red, uint8_t green, uint8_t blue) {
-	return (red << variableInfo.red.offset) | (green << variableInfo.green.offset) | (blue << variableInfo.blue.offset);
+	return (red << variableInfo.red.offset)
+    | (green << variableInfo.green.offset)
+    | (blue << variableInfo.blue.offset);
 }
 
-inline long getPixelLocation(long x, long y) {
-	long location = (x + variableInfo.xoffset) * (variableInfo.bits_per_pixel / 8) + (y + variableInfo.yoffset) * fixedInfo.line_length;
+long getPixelLocation(long x, long y) {
+	return (x + variableInfo.xoffset)
+    * (variableInfo.bits_per_pixel / 8)
+    + (y + variableInfo.yoffset)
+    * fixedInfo.line_length;
 }
 
 void setPixelColor(uint8_t* frameBuffer, int x, int y, uint32_t color) {
@@ -52,7 +57,8 @@ int main(int argc, char** argv) {
 	// Get our initial variable info for our frame buffer.
 	ioctl(frameBufferFile, FBIOGET_VSCREENINFO, &variableInfo);
 
-	// Make sure our bits per pixel is something reasonable to do color with and write it to file.
+	// Make sure our bits per pixel is something reasonable to do color with and 
+  // write it to file.
 	variableInfo.grayscale = 0;
 	variableInfo.bits_per_pixel = 32;
 	ioctl(frameBufferFile, FBIOPUT_VSCREENINFO, &variableInfo);
@@ -63,7 +69,15 @@ int main(int argc, char** argv) {
 	long screenSize = variableInfo.yres_virtual * fixedInfo.line_length;
 	
 	// Initialize our framebuffer and default colors.
-	uint8_t* frameBuffer = (uint8_t*)mmap(0, screenSize, PROT_READ | PROT_WRITE, MAP_SHARED, frameBufferFile, (off_t)0);
+	uint8_t* frameBuffer = (uint8_t*)mmap(
+      0,
+      screenSize,
+      PROT_READ | PROT_WRITE,
+      MAP_SHARED,
+      frameBufferFile,
+      (off_t)0
+  );
+
 	fillColor = makeColoredPixel(0x00, 0x00, 0x00);
 	strokeColor = fillColor;
 
