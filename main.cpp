@@ -71,25 +71,44 @@ void strokeLine(uint8_t* frameBuffer, int x1, int y1, int x2, int y2) {
 		return;
 	}	
 
-  float slope = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+  float slope = rise / run;
 
 	// Determine which angle to draw from.
 	if (slope <= 1.0f && slope >= -1.0f) {
 
 		// Draw horizontal-ish line.
-		int feedDirection = sign(run);
-		for (int x = x1; x != x2; x += feedDirection) {
-			float traversal = ((float)x - (float)x1) / (float)x2;
+		for (int x = x1; x != x2; x += sign(run)) {
+			float traversal = ((float)x - (float)x1) / (float)run;
 			int y = y1 + traversal * rise;
 			setPixelColor(frameBuffer, x, y, strokeColor);	
 		}
 	} else {
 		// Draw vertical-ish line.
 		for (int y = y1; y != y2; y += sign(rise)) {
-			float traversal = ((float)y - (float)y1) / (float)y2;
+			float traversal = ((float)y - (float)y1) / (float)rise;
 			int x = x1 + traversal * run;
 			setPixelColor(frameBuffer, x, y, strokeColor);
 		}
+	}
+}
+
+void strokeCircle(uint8_t* frameBuffer, int centerX, int centerY, float radius) {	
+	auto degToRad = [&](float degrees) -> float {
+		return (float)(degrees * ((float)M_PI / 180.0f));
+	};
+
+	int previousX = 1.0f * radius + (float)centerX;
+	int previousY = 0.0f * radius + (float)centerY;
+
+	float angle = 0.0f;
+	while (angle <= 360.0f) {
+		float radians = degToRad(angle);
+		int endX = cosf(radians) * radius + (float)centerX;
+		int endY = sinf(radians) * radius + (float)centerY;
+		strokeLine(frameBuffer, previousX, previousY, endX, endY);
+		previousX = endX;
+		previousY = endY;
+		angle += 0.01f;
 	}
 }
 
@@ -102,7 +121,7 @@ void clearScreen(uint8_t* frameBuffer) {
 }
 
 int main(int argc, char** argv) {
-	int  frameBufferFile = open("/dev/fb0", O_RDWR);
+	int frameBufferFile = open("/dev/fb0", O_RDWR);
 	
 	ioctl(frameBufferFile, FBIOGET_FSCREENINFO, &fixedInfo);
 
@@ -134,7 +153,6 @@ int main(int argc, char** argv) {
 	fillColor = makeColoredPixel(0x00, 0x00, 0x00);
 	strokeColor = makeColoredPixel(0xFF, 0xFF, 0x00);
 
-	/*
 	strokeLine(frameBuffer, 200, 200, 300, 150); // Right Up
 	strokeLine(frameBuffer, 200, 200, 300, 250); // Right Down
 	strokeLine(frameBuffer, 200, 200, 100, 150); // Left Up
@@ -146,18 +164,21 @@ int main(int argc, char** argv) {
 
 	strokeLine(frameBuffer, 500, 500, 100, 500);
 
-	int startX = 500;
-	int startY = 500;
-	float radius = 100.0f;
-	float angle = 30;
-	while (true) {
-		float radians = angle / 180.0f * M_PI;
-		int endX = cosf(radians) * radius + startX;
-		int endY = sinf(radians) * radius + startY;
-		strokeLine(frameBuffer, startX, startY, endX, endY);
-		angle += 0.001f;
-		clearScreen(frameBuffer);
-	}*/
+
+/*
+	float test = 0.0f;
+	while (test < 360) {
+		std::cout << test << " Degress -> " << degToRad(test) << " Radians" << std::endl;
+		test += 10.0f;
+	}
+*/
+	
+
+	clearScreen(frameBuffer);
+	strokeCircle(frameBuffer, 200, 200, 100.0f);
+
+	strokeColor = makeColoredPixel(0xFF, 0x00, 0x33);
+	strokeCircle(frameBuffer, 400, 400, 50.0f);
 	
 	// Draw a color output demo
 	/*
@@ -179,6 +200,7 @@ int main(int argc, char** argv) {
 	}
 	*/
 
+	/*
 	for (int x = 0; x < variableInfo.xres; x += 1) {
 		for (int y = 0; y < variableInfo.yres; y += 1) {
 			float hPercentage = (float)x / (float)variableInfo.xres;
@@ -192,6 +214,7 @@ int main(int argc, char** argv) {
 			setPixelColor(frameBuffer, x, y, fillColor);
 		}
 	}
+	*/
 	
 	return 0;
 }
