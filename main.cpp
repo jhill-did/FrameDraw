@@ -35,7 +35,10 @@ void setPixelColor(uint8_t* frameBuffer, int x, int y, uint32_t color) {
 }
 
 bool inBounds(int x, int y) {
-	return (x >= 0 || y >= 0 || x < variableInfo.xres || y < variableInfo.yres);
+	return x >= 0
+    || y >= 0
+    || x < (int)variableInfo.xres
+    || y < (int)variableInfo.yres;
 }
 
 void fillRect(uint8_t* frameBuffer, long x, long y, int width, int height) {
@@ -113,8 +116,8 @@ void strokeCircle(uint8_t* frameBuffer, int centerX, int centerY, float radius) 
 }
 
 void clearScreen(uint8_t* frameBuffer) {
-	for (int x = 0; x < variableInfo.xres; x += 1) {
-		for (int y = 0; y < variableInfo.yres; y += 1) {
+	for (int x = 0; x < (int)variableInfo.xres; x += 1) {
+		for (int y = 0; y < (int)variableInfo.yres; y += 1) {
 			setPixelColor(frameBuffer, x, y, clearColor);
 		}
 	}
